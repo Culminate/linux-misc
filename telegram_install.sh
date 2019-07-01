@@ -1,8 +1,10 @@
 #!/bin/bash
-set -x
-command -v curl >/dev/null 2>&1 || { echo >&2 "curl it's not installed. Aborting."; exit 1;}
-command -v wget >/dev/null 2>&1 || { echo >&2 "wget it's not installed. Aborting."; exit 1;}
-command -v jq   >/dev/null 2>&1 || { echo >&2 "jq it's not installed. Aborting."; exit 1;}
+# set -x # debug
+
+apigithub="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
+telegramlink=telegram-desktop
+installpath=/opt/bin/
+tmpath=~/Downloads/
 
 help() {
 	echo "
@@ -14,11 +16,11 @@ Usage:
 	"
 }
 
-install() {
-	apigithub="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
-	installpath=/opt/bin/
-	tmpath=~/Downloads/
+check_command() {
+	command -v $1 >/dev/null 2>&1 || { echo >&2 "$1 is not installed. Aborting."; exit 1;}
+}
 
+install() {
 	randpath=telegram-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 5 | head -n 1)/
 	filepath=$tmpath$randpath
 
@@ -29,25 +31,32 @@ install() {
 	tpath=$(echo -n $json | jq '.assets[] | select(.label == "Linux 64 bit: Binary") | .browser_download_url' | tr -d '"')
 	wget $tpath
 
-	mkdir -p $installpath
+	sudo mkdir -p $installpath
 	sudo tar xJf * -C $installpath
-	sudo ln -sf $installpath\Telegram/Telegram /usr/local/bin/telegram-desktop
+	sudo ln -sf $installpath\Telegram/Telegram /usr/local/bin/$telegramlink
 
 	rm -r $filepath
+	echo "Telegram successfully installed."
 	exit 0;
 }
 
 remove() {
-	linkpath=$(command -v telegram-desktop 2>&1)
+	linkpath=$(command -v $telegramlink 2>&1)
 	if [ -n $linkpath ]; then
-		echo "Symbolic link telegram-desktop not found. Aborting."
+		echo "Symbolic link $telegramlink not found. Aborting."
 		exit 1;
 	fi
 	tipath=$(readlink $linkpath)
-	rm -rf $(dirname $tipath)
-	rm -rf $linkpath
+	sudo rm -rf $(dirname $tipath)
+	sudo rm -rf $linkpath
+
+	echo "Telegram successfully deleted."
 	exit 0;
 }
+
+check_command curl
+check_command wget
+check_command jq
 
 if [ -n $1 ]; then
 	help
