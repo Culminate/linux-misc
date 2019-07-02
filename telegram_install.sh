@@ -42,7 +42,7 @@ install() {
 
 remove() {
 	linkpath=$(command -v $telegramlink 2>&1)
-	if [ -n $linkpath ]; then
+	if [ -z $linkpath ]; then
 		echo "Symbolic link $telegramlink not found. Aborting."
 		exit 1;
 	fi
@@ -58,7 +58,7 @@ check_command curl
 check_command wget
 check_command jq
 
-if [ -n $1 ]; then
+if [ -z $1 ]; then
 	help
 fi
 
