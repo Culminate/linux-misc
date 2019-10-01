@@ -4,7 +4,7 @@
 apigithub="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
 telegramlink=telegram-desktop
 installpath=/opt/bin/
-tmpath=~/Downloads/
+tmpath=/tmp/
 
 help() {
 	echo "
