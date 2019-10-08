@@ -7,13 +7,13 @@ installpath=/opt/bin/
 tmpath=/tmp/
 
 help() {
-	echo "
+cat << HELP
 Telegram installer from github official repository
 Usage:
 	options:
 	-i	install telegram
 	-r	remove telegram
-	"
+HELP
 }
 
 check_command() {
