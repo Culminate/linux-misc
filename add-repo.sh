@@ -34,6 +34,7 @@ case "$1" in
 	shift;;
 *)
 	help
+	exit
 esac
 shift
 done
@@ -51,7 +52,7 @@ done
 
 if [ -n "$key_file" ]; then
 	eval $(apt-config shell CODE_TRUSTED Dir::Etc::trustedparts/d)
-	CODE_TRUSTED="--keyring ${APT_TRUSTED}${key_file}"
+	CODE_TRUSTED="--keyring ${CODE_TRUSTED}${key_file}"
 fi
 
 for key in "${key_array[@]}"; do 
