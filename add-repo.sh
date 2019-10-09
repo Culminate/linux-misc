@@ -56,5 +56,5 @@ if [ -n "$key_file" ]; then
 fi
 
 for key in "${key_array[@]}"; do 
-	wget -qO - $KEY | sudo apt-key $CODE_TRUSTED add -
+	wget -qO - $key | sudo apt-key $CODE_TRUSTED add -
 done
