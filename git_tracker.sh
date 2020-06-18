@@ -96,7 +96,7 @@ change_branch() {
     num="$3"
 
     # Если у нас не цифра, то напрямую передаём аргумент в функцию
-    if ! [[ "$num" =~ "$REGEX_NUMERIC" ]]; then
+    if ! [[ "$num" =~ $REGEX_NUMERIC ]]; then
         print_br_chg_msg "$path" "$name" "$num"
         git_branch "$path" "$num"
         return 0
@@ -136,7 +136,7 @@ change_branch() {
 
 change_branches() {
 
-    if [[ $1 =~ "$REGEX_NUMERIC" ]]; then
+    if [[ $1 =~ $REGEX_NUMERIC ]]; then
         errcho "Use symbolic name of branch for multiple change branch"
         exit
     fi
