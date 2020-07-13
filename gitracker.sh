@@ -192,9 +192,36 @@ show_repos() {
     done
 }
 
-cd $(cwd) # Переходим к скрипту чтобы всё работало
+search_git() {
+while [[ "$PWD" != "/" ]]; do
+    if [[ -f ".gitracker" ]]; then
+        source ".gitracker"
+        break
+    elif [[ -d ".git" ]]; then
+        if [[ -f ".gitmodules" ]]; then
+            repname=$(basename "$PWD")
+            path="."
+            paths+=("$path $repname")
+            while read line; do
+            search=$(echo "$line" | grep "submodule" | sed -E "s/\[submodule \"(.*)\"\]/\1/")
+            if [[ -n $search ]]; then
+                repname="$search"
+                continue
+            fi
+            search=$(echo "$line" | grep "path" | sed -E "s/path = (.*)/\1/")
+            if [[ -n $search ]]; then
+                path="$search"
+                paths+=("$path $repname")
+            fi
+            done < .gitmodules
+        fi
+        break
+    fi
+    cd ..
+done
+}
 
-source git_paths.sh # инклюдим пути
+search_git
 
 if [[ -n "$1" && -n "$2" ]]; then
     if [[ "$1" == @ ]]; then # Если собака то все репозитории меняют ветку
