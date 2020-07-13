@@ -63,14 +63,14 @@ git_tags() {
 
 # Смотрим есть ли тэг на текущем месте
 git_tag() {
-    curtag="$(git -C "$1" tag --points-at HEAD)"
+    curtag="$(git -C "$1" tag --points-at HEAD | tail -n1)" # get last tag
     if [[ -n "$curtag" ]]; then curtag=" $curtag"; fi
     echo "$curtag"
 }
 
 # Выводим либо название ветки, либо хэш
 git_hash() {
-    echo "$1" | sed -E "s/.*([0-9a-z]{7})\)|\* /\1/"
+    echo "$1" | sed -E "s/.* ([0-9a-z\.]+)\)|\* /\1/"
 }
 
 # Превращаем обычный массив в ассоциативный
@@ -161,7 +161,12 @@ show_repo() {
     for b in "${allbranches[@]}"; do
         if [[ $b == \** ]]; then # Если текущая ветка
             tag=$(git_tag "$path") # Смотрим tag на HEAD
-            curbranch="$(git_hash "$b")$tag"
+            strbr=$(git_hash "$b")
+            if [[ " $strbr" == "$tag" ]]; then
+                curbranch="$strbr"
+            else
+                curbranch="$strbr$tag"
+            fi
         else
             obranches+=($b)
         fi
